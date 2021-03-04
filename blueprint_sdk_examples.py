@@ -22,15 +22,14 @@ class bluprint_sdk_examples:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(ROOT_DIR, 'user_config.yaml')
         with open(config_path) as file:
-            data = yaml.load(file,Loader=yaml.FullLoader)
-        self.blueprint_sdk_instance = self.create_blueprint_sdk_instance(data['console_url'], data['api_key'])
+            data = yaml.load(file, Loader=yaml.FullLoader)
+        self.blueprint_sdk_instance = self.create_blueprint_sdk_instance(data['host'], data['api_key'])
 
     def create_blueprint_sdk_instance(self, endpoint, apikey):
         """
-        Creates partner Projects sdk instance
+        Creates Blueprint sdk instance
         :param endpoint:
         :param apikey:
-        :param api_secret:
         :return:
         """
         configuration = Configuration()
@@ -39,14 +38,16 @@ class bluprint_sdk_examples:
         self.blueprint_sdk_instance = BlueprintsApi(ApiClient(configuration))
         return self.blueprint_sdk_instance
 
-    def create_blueprint(self, blueprint_name, project_id, version,psp_policy='cluster-scoped',
-                                 addonlist=None, excludeDefaultaddons=None):
+    def create_blueprint(self, blueprint_name, project_id, version, psp_policy='cluster-scoped',
+                         addonlist=None, excludeDefaultaddons=None):
         """
+        Create blueprint
+        :param excludeDefaultaddons:
+        :param addonlist:
         :param blueprint_name:
         :param project_id:
         :param psp_policy:
         :param blueprintlist:
-        :param excludeDefaultblueprints:
         :return:
         """
         try:
@@ -78,11 +79,11 @@ class bluprint_sdk_examples:
             api_response = self.blueprint_sdk_instance.create_blueprint(project_id, request)
             api_response = api_response.to_dict()
             request = V2PublishBlueprintRequest(snapshot_display_name=version)
-            self.blueprint_sdk_instance.publish_blueprint(project_id, api_response['metadata']['id'],request)
+            self.blueprint_sdk_instance.publish_blueprint(project_id, api_response['metadata']['id'], request)
         except ApiException as e:
             print("Exception when calling blueprintsApi->create_blueprint: %s\\n" % e)
 
-        return {"name":api_response['metadata']['name'],"id":api_response['metadata']['id']}
+        return {"name": api_response['metadata']['name'], "id": api_response['metadata']['id']}
 
     def get_blueprint(self, project_id, blueprint_id):
         """
@@ -126,6 +127,7 @@ class bluprint_sdk_examples:
 
         return True
 
+
 class RunParser(object):
 
     def __init__(self):
@@ -133,7 +135,7 @@ class RunParser(object):
 
     def setup_flag_parser(self):
         # not specifying a suite is supported in testrunner, we have a default here so that tests can be run without args
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(usage="blueprint_sdk_examples.py --blueprint_name blueprint_name --addons addon1 addon2 --version version --project_id id")
 
         parser.add_argument("--blueprint_name",
                             type=str,
@@ -158,13 +160,14 @@ class RunParser(object):
 
         args = parser.parse_args()
 
-        return {"blueprint_name":args.blueprint_name_,"addons":args.addons_,"version":args.version_,"project_id":args.project_id_}
+        return {"blueprint_name": args.blueprint_name_, "addons": args.addons_, "version": args.version_,
+                "project_id": args.project_id_}
 
 
 if __name__ == '__main__':
     blueprint = bluprint_sdk_examples()
     config = RunParser().config
-    resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"],addonlist=config["addons"],
-                                      project_id=config['project_id'],version=config['version'])
+    resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"], addonlist=config["addons"],
+                                      project_id=config['project_id'], version=config['version'])
     print("Blueprint Created:{}".format(resp))
     # print(blueprint.delete_blueprint(project_id='w2l5xqk',blueprint_id='pkzjp0m'))

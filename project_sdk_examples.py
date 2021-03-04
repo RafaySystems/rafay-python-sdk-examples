@@ -19,14 +19,13 @@ class project_sdk_examples:
         config_path = os.path.join(ROOT_DIR, 'user_config.yaml')
         with open(config_path) as file:
             data = yaml.load(file,Loader=yaml.FullLoader)
-        self.project_sdk_instance = self.create_project_sdk_instance(data['console_url'], data['api_key'])
+        self.project_sdk_instance = self.create_project_sdk_instance(data['host'], data['api_key'])
 
     def create_project_sdk_instance(self, endpoint, apikey):
         """
-        Creates partner user's organziation sdk instance
+        Creates projects sdk instance
         :param endpoint:
         :param apikey:
-        :param api_secret:
         :return:
         """
         configuration = Configuration()
@@ -37,12 +36,8 @@ class project_sdk_examples:
 
     def create_project(self, project_name):
         """
-        Creates yaml type addon with version
-        :param addon_name:
-        :param project_id:
-        :param namespace:
-        :param payload:
-        :param version:
+        Creates Project
+        :param project_name:
         :return:
         """
         data = Project(name=project_name,description='New project')
@@ -57,8 +52,8 @@ class project_sdk_examples:
 
     def delete_project(self, project_id):
         """
+        Delete Project
         :param project_id:
-        :param addon_id:
         :return:
         """
         try:
@@ -75,8 +70,7 @@ class RunParser(object):
         self.config = self.setup_flag_parser()
 
     def setup_flag_parser(self):
-        # not specifying a suite is supported in testrunner, we have a default here so that tests can be run without args
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(usage="project_sdk_examples.py --project_name name")
 
         parser.add_argument("--project_name",
                             type=str,

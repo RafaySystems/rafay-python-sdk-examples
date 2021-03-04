@@ -19,14 +19,13 @@ class addon_sdk_examples:
         config_path = os.path.join(ROOT_DIR, 'user_config.yaml')
         with open(config_path) as file:
             data = yaml.load(file,Loader=yaml.FullLoader)
-        self.addon_sdk_instance = self.create_addon_sdk_instance(data['console_url'], data['api_key'])
+        self.addon_sdk_instance = self.create_addon_sdk_instance(data['host'], data['api_key'])
 
     def create_addon_sdk_instance(self, endpoint, apikey):
         """
-        Creates partner user's organziation sdk instance
+        Creates Addon sdk instance
         :param endpoint:
         :param apikey:
-        :param api_secret:
         :return:
         """
         configuration = Configuration()
@@ -101,6 +100,7 @@ class addon_sdk_examples:
 
     def delete_addon(self, project_id, addon_id):
         """
+        Deletes Addon
         :param project_id:
         :param addon_id:
         :return:
@@ -120,7 +120,7 @@ class RunParser(object):
 
     def setup_flag_parser(self):
         # not specifying a suite is supported in testrunner, we have a default here so that tests can be run without args
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(usage="addon_sdk_examples.py --namespace namespacename --addon_name addonname --version version --project_id id")
 
         parser.add_argument("--namespace",
                             type=str,
