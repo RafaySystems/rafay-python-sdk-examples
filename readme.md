@@ -41,7 +41,7 @@ api_key: <api_key generated from your rafay organziation>
    Addon created:{'addon_id': 'g29wek0', 'type': 'NativeYaml', 'name': 'sample-addon'}
    ```
 3. `blueprint_example.py`:
-     - Run below command with necessary runner arguments to a create project
+     - Run below command with necessary runner arguments to a create blueprint
     ```
     python3 blueprint_sdk_examples.py --blueprint_name sample-blueprint --addons sample-addon sample-addon1 --project_id pd270k4 --version v1
     ```
