@@ -128,6 +128,17 @@ class bluprint_sdk_examples:
         return True
 
 
+    def multiple_blueprints(self,number, project_id, version):
+
+        blueprints = []
+        for i in range(number):
+            blueprint = self.create_blueprint("rauto-blueprint-{}".format(i+1),project_id, version)
+            blueprints.append(blueprint)
+            print(i)
+
+        return blueprints
+
+
 class RunParser(object):
 
     def __init__(self):
@@ -167,7 +178,8 @@ class RunParser(object):
 if __name__ == '__main__':
     blueprint = bluprint_sdk_examples()
     config = RunParser().config
-    resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"], addonlist=config["addons"],
-                                      project_id=config['project_id'], version=config['version'])
-    print("Blueprint Created:{}".format(resp))
+    # resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"], addonlist=config["addons"],
+    #                                   project_id=config['project_id'], version=config['version'])
+    # print("Blueprint Created:{}".format(resp))
+    print(blueprint.multiple_blueprints(project_id='w2l5xqk',number=2,version='v1'))
     # print(blueprint.delete_blueprint(project_id='w2l5xqk',blueprint_id='pkzjp0m'))

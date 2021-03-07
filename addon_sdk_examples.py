@@ -113,6 +113,19 @@ class addon_sdk_examples:
 
         return True
 
+    def multiple_addons(self,number, project_id, namespace, payload, version):
+
+        addons = []
+        for i in range(number):
+            addon = self.create_yaml_addon("rauto-addon-{}".format(i+1), project_id, namespace, payload, version)
+            addons.append(addon)
+            print(i)
+
+        return addons
+
+
+
+
 class RunParser(object):
 
     def __init__(self):
@@ -153,10 +166,11 @@ if __name__ == '__main__':
     helm_payload = os.path.join(ROOT_DIR, 'config/chartmuseum.tgz')
     helm_values = os.path.join(ROOT_DIR, 'config/chartmuseum-values.yaml')
     addon = addon_sdk_examples()
-    config = RunParser().config
-    addon_resp = addon.create_yaml_addon(namespace=config['namespace'], addon_name=config['addon_name'], payload=yaml_payload,
-                                       project_id=config['project_id'],version=config['version'])
-    print("Addon created:{}".format(addon_resp))
+    # config = RunParser().config
+    # addon_resp = addon.create_yaml_addon(namespace=config['namespace'], addon_name=config['addon_name'], payload=yaml_payload,
+    #                                    project_id=config['project_id'],version=config['version'])
+    # print("Addon created:{}".format(addon_resp))
     # # addon.delete_addon(project_id='w2l5xqk',addon_id=addon_id)
     # addon_id = addon.create_helm3_addon(namespace='elk-ns', addon_name='addon2', payload=helm_payload,values=helm_values, project_id='w2l5xqk',version='v1')
     # # addon.delete_addon(project_id='w2l5xqk',addon_id=addon_id)
+    print(addon.multiple_addons(2,'w2l5xqk',"elk-ns",yaml_payload,'v1'))
