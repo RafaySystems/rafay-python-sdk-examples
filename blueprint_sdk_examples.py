@@ -1,11 +1,6 @@
 import argparse
 import os
-import simplejson
-import json
-
 import yaml
-from robot.libraries.BuiltIn import BuiltIn
-from robot.libraries.OperatingSystem import OperatingSystem
 from rafaysdk.api.blueprints_api import BlueprintsApi
 from rafaysdk.models.v2_rafay_meta import V2RafayMeta
 from rafaysdk.models.v2_snapshot_ref import V2SnapshotRef

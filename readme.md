@@ -6,15 +6,23 @@ This repo provides how in generating python SDK and examples on how to manage mu
   - Ensure SDK is generated with name **`rafaysdk`**, as examples are referring sdk with this name
   - Used Docker images to generate SDK in desired location
     ```
-    docker run --rm -v /tmp:/tmp/ swaggerapi/swagger-codegen-cli generate -i https://app.rafay.dev/swagger-ui/rafay-swagger-specs.json -l python -o /tmp/SDKGEN -DpackageName=rafaysdk
+    docker run --rm -v /tmp:/tmp/ swaggerapi/swagger-codegen-cli generate -i https://console.rafay.dev/swagger-ui/rafay-swagger-specs.json -l python -o /tmp/SDKGEN -DpackageName=rafaysdk
     ```
   - After generating SDK install SDK using pip at the SDK path
     
     ```
-    user~/tmp/SDKGEN% pip install . 
+    cd /tmp/SDKGEN
+    user~/tmp/SDKGEN% pip install .
     ```
-##### Configuration file : 
-Configuration file `config.yaml` has two parameters 
+- Clone this repo and install requirements
+   ```
+   git clone https://github.com/RafaySystems/rafay-python-sdk-examples.git
+   cd rafay-python-sdk-examples
+   pip install -r requirements.txt
+   ```
+
+##### Configuration file :
+Configuration file `user_config.yaml` has two parameters
 1. console_url - Rafay controller URL 
 2. api_key - Generated API key to be placed here. SDK uses this API Key to authenticate and Authorize SDK binding calls.
 ```yaml
