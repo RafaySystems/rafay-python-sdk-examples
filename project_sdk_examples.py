@@ -1,11 +1,6 @@
 import argparse
 import os
-import simplejson
-import json
-from robot.libraries.BuiltIn import BuiltIn
-from robot.libraries.OperatingSystem import OperatingSystem
 from rafaysdk.models.project import Project
-from rafaysdk.models.publish_addon_request import PublishAddonRequest
 from rafaysdk.api.projects_api import ProjectsApi
 from rafaysdk import Configuration, ApiClient
 from rafaysdk.rest import ApiException

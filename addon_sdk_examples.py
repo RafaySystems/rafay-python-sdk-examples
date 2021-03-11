@@ -1,9 +1,5 @@
 import argparse
 import os
-import simplejson
-import json
-from robot.libraries.BuiltIn import BuiltIn
-from robot.libraries.OperatingSystem import OperatingSystem
 from rafaysdk.models.addon import Addon
 from rafaysdk.models.publish_addon_request import PublishAddonRequest
 from rafaysdk.api.addons_api import AddonsApi
