@@ -15,6 +15,8 @@ from rafaysdk import Configuration, ApiClient
 from rafaysdk.models.v2_blueprint import V2Blueprint
 from rafaysdk.rest import ApiException
 
+from project_sdk_examples import project_sdk_examples
+
 
 class bluprint_sdk_examples:
 
@@ -24,6 +26,7 @@ class bluprint_sdk_examples:
         with open(config_path) as file:
             data = yaml.load(file, Loader=yaml.FullLoader)
         self.blueprint_sdk_instance = self.create_blueprint_sdk_instance(data['host'], data['api_key'])
+        self.project = project_sdk_examples()
 
     def create_blueprint_sdk_instance(self, endpoint, apikey):
         """
@@ -38,7 +41,7 @@ class bluprint_sdk_examples:
         self.blueprint_sdk_instance = BlueprintsApi(ApiClient(configuration))
         return self.blueprint_sdk_instance
 
-    def create_blueprint(self, blueprint_name, project_id, version, psp_policy='cluster-scoped',
+    def create_blueprint(self, blueprint_name, project_name, version, psp_policy='cluster-scoped',
                          addonlist=None, excludeDefaultaddons=None):
         """
         Create blueprint
@@ -50,6 +53,7 @@ class bluprint_sdk_examples:
         :param blueprintlist:
         :return:
         """
+        project_id = self.project.get_project_id(project_name=project_name)
         try:
             # Option to add psp policy
             labels = {
@@ -153,21 +157,21 @@ class RunParser(object):
                             dest="version_",
                             default=None)
 
-        parser.add_argument("--project_id",
+        parser.add_argument("--project_name",
                             type=str,
-                            dest="project_id_",
+                            dest="project_name_",
                             default=None)
 
         args = parser.parse_args()
 
         return {"blueprint_name": args.blueprint_name_, "addons": args.addons_, "version": args.version_,
-                "project_id": args.project_id_}
+                "project_name": args.project_name_}
 
 
 if __name__ == '__main__':
     blueprint = bluprint_sdk_examples()
     config = RunParser().config
     resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"], addonlist=config["addons"],
-                                      project_id=config['project_id'], version=config['version'])
+                                      project_name=config['project_name'], version=config['version'])
     print("Blueprint Created:{}".format(resp))
     # print(blueprint.delete_blueprint(project_id='w2l5xqk',blueprint_id='pkzjp0m'))

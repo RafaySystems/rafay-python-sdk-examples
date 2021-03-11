@@ -34,7 +34,7 @@ api_key: <api_key generated from your rafay organziation>
 2. `addon_sdk_examples.py`:
     - Run below command with necessary runner arguments to create addon
     ```
-   python3 addon_sdk_examples.py --namespace sample-namespace --addon_name sample-addon --project_id pd270k4 --version v1
+   python3 addon_sdk_examples.py --namespace sample-namespace --addon_name sample-addon --project_name sample_project --version v1
     ```
    - Output: 
    ```
@@ -43,9 +43,48 @@ api_key: <api_key generated from your rafay organziation>
 3. `blueprint_example.py`:
      - Run below command with necessary runner arguments to a create blueprint
     ```
-    python3 blueprint_sdk_examples.py --blueprint_name sample-blueprint --addons sample-addon sample-addon1 --project_id pd270k4 --version v1
+    python3 blueprint_sdk_examples.py --blueprint_name sample-blueprint --addons sample-addon sample-addon1 --project_name sample_project --version v1
     ```
     - Output: 
    ```
    Blueprint Created:{'name': 'sample-blueprint', 'id': 'dpkv0mn'}
+   ```
+4. `ekscluster_sdk_examples.py`:
+     - Run below command with necessary runner arguments to a provision EKS-Cluster
+       
+    -   Sample EKS Config File for --config_file argument
+    ```yaml
+    apiVersion: rafay.io/v1alpha5
+    kind: ClusterConfig
+    metadata:
+      name: demo-ap-eks-test
+      region: us-west-1
+      version: "1.17"
+    nodeGroups:
+    - amiFamily: AmazonLinux2
+      desiredCapacity: 1
+      iam:
+        withAddonPolicies:
+          autoScaler: true
+          imageBuilder: true
+      instanceType: t3.xlarge
+      maxSize: 1
+      minSize: 1
+      name: ankur-ng
+      volumeSize: 70
+      volumeType: gp2
+    vpc:
+      cidr: 192.168.0.0/16
+      clusterEndpoints:
+        privateAccess: true
+        publicAccess: false
+      nat:
+        gateway: Single
+    ```
+    ```
+    python3 ekscluster_sdk_examples.py --cluster_name eks-new1234 --project_name defaultproject --config_file /Users/abhiram/PycharmProjects/rafay-python-sdk-examples/eks-config.yaml --cluster_blueprint default --cloud_provider_id gkj3nzm --cloud_provider_name abhi-cred
+    ```
+    - Output: 
+   ```
+   Cluster Created:{'cluster_id': 'j2q4p8k', 'cluster_type': 'aws-eks', 'cluster_name': 'eks-new1234'}
    ```

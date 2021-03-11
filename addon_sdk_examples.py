@@ -11,6 +11,8 @@ from rafaysdk import Configuration, ApiClient
 from rafaysdk.rest import ApiException
 import yaml
 
+from project_sdk_examples import project_sdk_examples
+
 
 class addon_sdk_examples:
 
@@ -20,6 +22,7 @@ class addon_sdk_examples:
         with open(config_path) as file:
             data = yaml.load(file,Loader=yaml.FullLoader)
         self.addon_sdk_instance = self.create_addon_sdk_instance(data['host'], data['api_key'])
+        self.project = project_sdk_examples()
 
     def create_addon_sdk_instance(self, endpoint, apikey):
         """
@@ -34,7 +37,7 @@ class addon_sdk_examples:
         self.addon_sdk_instance = AddonsApi(ApiClient(configuration))
         return self.addon_sdk_instance
 
-    def create_yaml_addon(self, addon_name, project_id, namespace, payload, version):
+    def create_yaml_addon(self, addon_name, project_name, namespace, payload, version):
         """
         Creates yaml type addon with version
         :param addon_name:
@@ -44,6 +47,7 @@ class addon_sdk_examples:
         :param version:
         :return:
         """
+        project_id = self.project.get_project_id(project_name=project_name)
         try:
             request = Addon(name=addon_name, namespace=namespace, type='NativeYaml')
             addon_response = self.addon_sdk_instance.create_addon(project_id, request)
@@ -57,7 +61,7 @@ class addon_sdk_examples:
             print("Exception when calling AddonsApi->create_addon: %s\\n" % e)
         return {"addon_id":addon_resp['id'],"type":addon_resp['type'],"name":addon_resp['name']}
 
-    def create_helm3_addon(self, addon_name, project_id, namespace, payload, values, version):
+    def create_helm3_addon(self, addon_name, project_name, namespace, payload, values, version):
         """
         Creates Helm3 type addon with version
         :param addon_name:
@@ -67,6 +71,7 @@ class addon_sdk_examples:
         :param version:
         :return:
         """
+        project_id = self.project.get_project_id(project_name=project_name)
         try:
             request = Addon(name=addon_name, namespace=namespace, type='NativeHelm')
             addon_response = self.addon_sdk_instance.create_addon(project_id, request)
@@ -137,14 +142,14 @@ class RunParser(object):
                             dest="version_",
                             default=None)
 
-        parser.add_argument("--project_id",
+        parser.add_argument("--project_name",
                             type=str,
-                            dest="project_id_",
+                            dest="project_name_",
                             default=None)
 
         args = parser.parse_args()
 
-        return {"namespace":args.namespace_,"addon_name":args.addon_name_,"version":args.version_,"project_id":args.project_id_}
+        return {"namespace":args.namespace_,"addon_name":args.addon_name_,"version":args.version_,"project_name":args.project_name_}
 
 
 if __name__ == '__main__':
@@ -155,7 +160,7 @@ if __name__ == '__main__':
     addon = addon_sdk_examples()
     config = RunParser().config
     addon_resp = addon.create_yaml_addon(namespace=config['namespace'], addon_name=config['addon_name'], payload=yaml_payload,
-                                       project_id=config['project_id'],version=config['version'])
+                                       project_name=config['project_name'],version=config['version'])
     print("Addon created:{}".format(addon_resp))
     # # addon.delete_addon(project_id='w2l5xqk',addon_id=addon_id)
     # addon_id = addon.create_helm3_addon(namespace='elk-ns', addon_name='addon2', payload=helm_payload,values=helm_values, project_id='w2l5xqk',version='v1')

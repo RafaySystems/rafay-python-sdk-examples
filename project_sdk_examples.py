@@ -49,6 +49,18 @@ class project_sdk_examples:
 
         return {"project_id":api_response['id'],"name":api_response['name']}
 
+    def list_projects(self):
+
+        limit = 56  # int | Number of results to return per page (optional)
+        offset = 56  # int | The base index of records to be returned in the results (optional)
+
+        try:
+            api_response = self.project_sdk_instance.list_projects()
+        except ApiException as e:
+            print("Exception when calling ProjectsApi->list_projects: %s\n" % e)
+
+        return api_response.to_dict()['results']
+
 
     def delete_project(self, project_id):
         """
@@ -63,6 +75,19 @@ class project_sdk_examples:
             return False
 
         return True
+
+    def get_project_id(self,project_name):
+        """
+        :param project_name:
+        :return:
+        """
+        results = self.list_projects()
+
+        for project in results:
+            if project_name == project['name']:
+                return project['id']
+
+        return None
 
 class RunParser(object):
 
@@ -87,4 +112,5 @@ if __name__ == '__main__':
     config = RunParser().config
     resp = project.create_project(project_name=config["project_name"])
     print("Project Created:{}".format(resp))
+    # print(project.get_project_id('defaultproject'))
     # project.delete_project(project_id='g299z32')
