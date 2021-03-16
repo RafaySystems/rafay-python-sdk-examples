@@ -1,12 +1,6 @@
 import argparse
 import os
-import simplejson
-import json
 import yaml
-from robot.libraries.BuiltIn import BuiltIn
-from robot.libraries.OperatingSystem import OperatingSystem
-import rafaysdk.models.v2_blueprint
-from rafaysdk.models.metro import Metro
 from rafaysdk.api.cluster_api import ClusterApi
 from rafaysdk import Configuration, ApiClient
 from rafaysdk.rest import ApiException
@@ -28,10 +22,9 @@ class ekscluster_sdk_examples:
 
     def create_cluster_sdk_instance(self, endpoint, apikey):
         """
-        Creates partner Projects sdk instance
+        Creates Cluster sdk instance
         :param endpoint:
         :param apikey:
-        :param api_secret:
         :return:
         """
         configuration = Configuration()
@@ -64,7 +57,7 @@ class ekscluster_sdk_examples:
         }
         project_id = self.project.get_project_id(project_name=project_name)
         data = ClusterInfra(name=cluster_name, cluster_type='aws-eks', cloud_provider=cloud_provider_name, provider_id=cloud_provider_id,
-                                                cluster_provider_params=params,cluster_blueprint=blueprint,auto_create=False)
+                                                cluster_provider_params=params,cluster_blueprint=blueprint,auto_create=True)
 
         api_response = self.cluster_sdk_instance.create_cluster(project_id, cluster_data=data)
         resp = api_response.to_dict()
@@ -93,8 +86,7 @@ class RunParser(object):
         self.config = self.setup_flag_parser()
 
     def setup_flag_parser(self):
-        # not specifying a suite is supported in testrunner, we have a default here so that tests can be run without args
-        parser = argparse.ArgumentParser(usage="blueprint_sdk_examples.py --blueprint_name blueprint_name --addons addon1 addon2 --version version --project_id id")
+        parser = argparse.ArgumentParser(usage="ekscluster_sdk_examples.py --cluster_name <cluster-name> --project_name <project-name> --config_file <path-to-config-file> --cluster_blueprint <blueprint-name> --cloud_provider_id <cloud-provider-id> --cloud_provider_name <cloud-provider-name>")
 
         parser.add_argument("--cluster_name",
                             type=str,
@@ -140,4 +132,3 @@ if __name__ == '__main__':
                                         cloud_provider_id=config["cloud_provider_id"],blueprint=config["cluster_blueprint"],project_name=config["project_name"])
     print("Cluster Created:{}".format(resp))
     # print(cluster.provision_cluster('rx28oml','7w2lnkp'))
-    # print(namespace.delete_namespace('z24wnmy','gkjj6lk'))

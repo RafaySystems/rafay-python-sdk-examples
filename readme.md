@@ -65,7 +65,7 @@ api_key: <api_key generated from your rafay organziation>
     apiVersion: rafay.io/v1alpha5
     kind: ClusterConfig
     metadata:
-      name: demo-ap-eks-test
+      name: demo-eks-test
       region: us-west-1
       version: "1.17"
     nodeGroups:
@@ -90,9 +90,9 @@ api_key: <api_key generated from your rafay organziation>
         gateway: Single
     ```
     ```
-    python3 ekscluster_sdk_examples.py --cluster_name eks-new1234 --project_name defaultproject --config_file /Users/abhiram/PycharmProjects/rafay-python-sdk-examples/eks-config.yaml --cluster_blueprint default --cloud_provider_id gkj3nzm --cloud_provider_name abhi-cred
+    python3 ekscluster_sdk_examples.py --cluster_name demo-eks-test --project_name defaultproject --config_file ./eks-config.yaml --cluster_blueprint default --cloud_provider_id gkj3nzm --cloud_provider_name dev-credential
     ```
     - Output: 
    ```
-   Cluster Created:{'cluster_id': 'j2q4p8k', 'cluster_type': 'aws-eks', 'cluster_name': 'eks-new1234'}
+   Cluster Created:{'cluster_id': 'j2q4p8k', 'cluster_type': 'aws-eks', 'cluster_name': 'demo-eks-test'}
    ```

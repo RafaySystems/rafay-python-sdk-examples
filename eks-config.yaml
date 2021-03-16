@@ -1,9 +1,9 @@
 apiVersion: rafay.io/v1alpha5
 kind: ClusterConfig
 metadata:
-  name: demo-ap-eks-test
+  name: demo-eks
   region: us-west-1
-  version: "1.17"
+  version: "1.19"
 nodeGroups:
 - amiFamily: AmazonLinux2
   desiredCapacity: 1
@@ -14,9 +14,9 @@ nodeGroups:
   instanceType: t3.xlarge
   maxSize: 1
   minSize: 1
-  name: ankur-ng
+  name: ng-1
   volumeSize: 70
-  volumeType: gp2
+  volumeType: gp3
 vpc:
   cidr: 192.168.0.0/16
   clusterEndpoints:
