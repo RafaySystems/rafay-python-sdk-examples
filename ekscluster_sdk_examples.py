@@ -10,8 +10,6 @@ from project_sdk_examples import project_sdk_examples
 
 
 class ekscluster_sdk_examples:
-    ROBOT_LIBRARY_SCOPE = 'SUITE'
-
     def __init__(self):
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(ROOT_DIR, '../rafay-python-sdk-examples/user_config.yaml')
