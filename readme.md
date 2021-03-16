@@ -65,9 +65,9 @@ api_key: <api_key generated from your rafay organziation>
     apiVersion: rafay.io/v1alpha5
     kind: ClusterConfig
     metadata:
-      name: demo-eks-test
+      name: demo-eks
       region: us-west-1
-      version: "1.17"
+      version: "1.18"
     nodeGroups:
     - amiFamily: AmazonLinux2
       desiredCapacity: 1
@@ -90,7 +90,7 @@ api_key: <api_key generated from your rafay organziation>
         gateway: Single
     ```
     ```
-    python3 ekscluster_sdk_examples.py --cluster_name demo-eks-test --project_name defaultproject --config_file ./eks-config.yaml --cluster_blueprint default --cloud_provider_id gkj3nzm --cloud_provider_name dev-credential
+    python3 ekscluster_sdk_examples.py --cluster_name demo-eks --project_name defaultproject --config_file ./eks-config.yaml --cluster_blueprint default --cloud_provider_id gkj3nzm --cloud_provider_name dev-credential
     ```
     - Output: 
    ```
