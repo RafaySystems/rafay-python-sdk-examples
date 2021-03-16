@@ -94,5 +94,5 @@ api_key: <api_key generated from your rafay organziation>
     ```
     - Output: 
    ```
-   Cluster Created:{'cluster_id': 'j2q4p8k', 'cluster_type': 'aws-eks', 'cluster_name': 'demo-eks-test'}
+   Cluster Created:{'cluster_id': 'j2q4p8k', 'cluster_type': 'aws-eks', 'cluster_name': 'demo-eks'}
    ```
