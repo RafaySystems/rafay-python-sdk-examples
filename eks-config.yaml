@@ -17,6 +17,7 @@ nodeGroups:
   name: ng-1
   volumeSize: 70
   volumeType: gp3
+  privateNetworking: true
 vpc:
   cidr: 192.168.0.0/16
   clusterEndpoints:
@@ -24,3 +25,14 @@ vpc:
     publicAccess: false
   nat:
     gateway: Single
+  subnets:
+      private:
+        us-west-1b:
+          id: subnet-0bf6296c652a5
+        us-west-1c:
+          id: subnet-0e7ba2d2d4f35
+      public:
+        us-west-1b:
+          id: subnet-0a52c40d9388a
+        us-west-1c:
+          id: subnet-0df8a7ec71f92

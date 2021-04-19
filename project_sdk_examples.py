@@ -13,7 +13,7 @@ class project_sdk_examples:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(ROOT_DIR, 'user_config.yaml')
         with open(config_path) as file:
-            data = yaml.load(file,Loader=yaml.FullLoader)
+            data = yaml.safe_load(file)
         self.project_sdk_instance = self.create_project_sdk_instance(data['host'], data['api_key'])
 
     def create_project_sdk_instance(self, endpoint, apikey):
@@ -90,7 +90,12 @@ class RunParser(object):
         self.config = self.setup_flag_parser()
 
     def setup_flag_parser(self):
-        parser = argparse.ArgumentParser(usage="project_sdk_examples.py --project_name name")
+        parser = argparse.ArgumentParser(usage="project_sdk_examples.py --action <get|delete|create> --project_name name")
+
+        parser.add_argument("--action",
+                            type=str,
+                            dest="action_",
+                            default=None)
 
         parser.add_argument("--project_name",
                             type=str,
@@ -99,13 +104,19 @@ class RunParser(object):
 
         args = parser.parse_args()
 
-        return {"project_name":args.project_name_}
+        return {"action":args.action_, "project_name":args.project_name_}
 
 
 if __name__ == '__main__':
     project = project_sdk_examples()
     config = RunParser().config
-    resp = project.create_project(project_name=config["project_name"])
-    print("Project Created:{}".format(resp))
-    # print(project.get_project_id('defaultproject'))
-    # project.delete_project(project_id='g299z32')
+    if config["action"] == "get":
+        resp = project.get_project_id(config["project_name"])
+        print(resp)
+    if config["action"] == "delete":
+        project_id=project.get_project_id(config["project_name"])
+        resp=project.delete_project(project_id=project_id)
+        print(resp)
+    if config["action"] == "create":
+        resp = project.create_project(project_name=config["project_name"])
+        print("Project Created:{}".format(resp))

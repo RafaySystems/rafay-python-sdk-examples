@@ -19,8 +19,8 @@ class bluprint_sdk_examples:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(ROOT_DIR, 'user_config.yaml')
         with open(config_path) as file:
-            data = yaml.load(file, Loader=yaml.FullLoader)
-        self.blueprint_sdk_instance = self.create_blueprint_sdk_instance(data['host'], data['api_key'])
+            data = yaml.safe_load(file)
+            self.blueprint_sdk_instance = self.create_blueprint_sdk_instance(data['host'], data['api_key'])
         self.project = project_sdk_examples()
 
     def create_blueprint_sdk_instance(self, endpoint, apikey):
@@ -84,40 +84,42 @@ class bluprint_sdk_examples:
 
         return {"name": api_response['metadata']['name'], "id": api_response['metadata']['id']}
 
-    def get_blueprint(self, project_id, blueprint_id):
-        """
-        Get blueprint details
-        :param project_id:
-        :param blueprint_id:
-        :return:
-        """
-        try:
-            response = self.blueprint_sdk_instance.get_blueprint_id(blueprint_id=blueprint_id, project_id=project_id)
-        except ApiException as e:
-            print("Exception when calling blueprintsApi->get_blueprint: %s\\n" % e)
 
-        return response.to_dict()
-
-    def get_all_blueprints(self, project_id):
+    def list_blueprints(self, project_name):
         """
         List all existing blueprints
         :param project_id:
         :return:
         """
+
+        project_id = self.project.get_project_id(project_name=project_name)
         try:
             response = self.blueprint_sdk_instance.get_blueprints(project_id=project_id, limit=1000)
         except ApiException as e:
             print("Exception when calling blueprintsApi->list_blueprint: %s\\n" % e)
 
-        return response.to_dict()
+        return response.to_dict()['items']
 
-    def delete_blueprint(self, project_id, blueprint_id):
+    def get_blueprint_id(self, project_name, blueprint_name):
         """
-        Delete blueprint with ID
-        :param project_id:
-        :param blueprint_id:
+        :param project_name:
         :return:
         """
+        results = self.list_blueprints(project_name)
+
+        for blueprint in results:
+            if blueprint_name == blueprint['metadata']['name']:
+                return blueprint['metadata']['id']
+
+    def delete_blueprint(self, project_name, blueprint_name):
+        """
+        Delete blueprint with ID
+        :param project_name:
+        :param blueprint_name:
+        :return:
+        """
+        project_id = self.project.get_project_id(project_name=project_name)
+        blueprint_id = self.get_blueprint_id(project_name, blueprint_name)
         try:
             self.blueprint_sdk_instance.delete_blueprint(blueprint_id=blueprint_id, project_id=project_id)
         except ApiException as e:
@@ -126,6 +128,22 @@ class bluprint_sdk_examples:
 
         return True
 
+    def get_blueprint(self, project_name, blueprint_name):
+        """
+        Get blueprint details
+        :param project_name:
+        :param blueprint_name:
+        :return:
+        """
+
+        project_id = self.project.get_project_id(project_name=project_name)
+        blueprint_id = self.get_blueprint_id(project_name, blueprint_name)
+        try:
+            response = self.blueprint_sdk_instance.get_blueprint_id(blueprint_id=blueprint_id, project_id=project_id)
+        except ApiException as e:
+            print("Exception when calling blueprintsApi->get_blueprint: %s\\n" % e)
+
+        return response.to_dict()
 
 class RunParser(object):
 
@@ -133,8 +151,14 @@ class RunParser(object):
         self.config = self.setup_flag_parser()
 
     def setup_flag_parser(self):
-        # not specifying a suite is supported in testrunner, we have a default here so that tests can be run without args
-        parser = argparse.ArgumentParser(usage="blueprint_sdk_examples.py --blueprint_name blueprint_name --addons addon1 addon2 --version version --project_id id")
+        parser = argparse.ArgumentParser(usage="blueprint_sdk_examples.py --action <get|delete|create|list> \
+                                               --blueprint_name blueprint_name --addons addon1 addon2 --version version \
+                                               --project_name project_name")
+
+        parser.add_argument("--action",
+                            type=str,
+                            dest="action_",
+                            default=None)
 
         parser.add_argument("--blueprint_name",
                             type=str,
@@ -159,14 +183,23 @@ class RunParser(object):
 
         args = parser.parse_args()
 
-        return {"blueprint_name": args.blueprint_name_, "addons": args.addons_, "version": args.version_,
+        return {"action":args.action_,"blueprint_name": args.blueprint_name_, "addons": args.addons_, "version": args.version_,
                 "project_name": args.project_name_}
 
 
 if __name__ == '__main__':
     blueprint = bluprint_sdk_examples()
     config = RunParser().config
-    resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"], addonlist=config["addons"],
+    if config["action"] == "get":
+        resp = blueprint.get_blueprint(config["project_name"], config["blueprint_name"])
+        print(resp)
+    if config["action"] == "list":
+        resp = blueprint.list_blueprints(config["project_name"])
+        print(resp)
+    if config["action"] == "delete":
+        resp = blueprint.delete_blueprint(config["project_name"], config["blueprint_name"])
+        print(resp)
+    if config["action"] == "create":
+        resp = blueprint.create_blueprint(blueprint_name=config["blueprint_name"], addonlist=config["addons"],
                                       project_name=config['project_name'], version=config['version'])
-    print("Blueprint Created:{}".format(resp))
-    # print(blueprint.delete_blueprint(project_id='w2l5xqk',blueprint_id='pkzjp0m'))
+        print("Blueprint Created:{}".format(resp))

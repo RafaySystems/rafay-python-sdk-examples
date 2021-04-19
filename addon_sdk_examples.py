@@ -16,7 +16,7 @@ class addon_sdk_examples:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(ROOT_DIR, 'user_config.yaml')
         with open(config_path) as file:
-            data = yaml.load(file,Loader=yaml.FullLoader)
+            data = yaml.safe_load(file)
         self.addon_sdk_instance = self.create_addon_sdk_instance(data['host'], data['api_key'])
         self.project = project_sdk_examples()
 
@@ -84,14 +84,44 @@ class addon_sdk_examples:
             print("Exception when calling AddonsApi->create_addon: %s\\n" % e)
         return {"addon_id":addon_resp['id'],"type":addon_resp['type'],"name":addon_resp['name']}
 
-    def get_addon(self, project_id, addon_id):
+    def list_addons(self, project_name):
+
         """
-        Get addon details
-        :param project_id:
-        :param addon_id:
+        :param project_name:
         :return:
         """
+        limit = 56  # int | Number of results to return per page (optional)
+        offset = 56  # int | The base index of records to be returned in the results (optional)
 
+        project_id = self.project.get_project_id(project_name=project_name)
+        try:
+            api_response = self.addon_sdk_instance.list_addons(project_id=project_id)
+        except ApiException as e:
+            print("Exception when calling AddonsApi->list_addons: %s\n" % e)
+
+        return api_response.to_dict()['results']
+
+    def get_addon_id(self, project_name, addon_name):
+        """
+        :param project_name:
+        :param addon_name:
+        :return:
+        """
+        results = self.list_addons(project_name)
+
+        for addon in results:
+            if addon_name == addon['name']:
+                return addon['id']
+
+    def get_addon(self, project_name, addon_name):
+        """
+        Get addon details
+        :param project_name:
+        :param addon_name:
+        :return:
+        """
+        project_id = self.project.get_project_id(project_name=project_name)
+        addon_id= self.get_addon_id(project_name,addon_name)
         try:
             response = self.addon_sdk_instance.get_addon(id=addon_id, project_id=project_id)
         except ApiException as e:
@@ -99,13 +129,17 @@ class addon_sdk_examples:
 
         return response.to_dict()
 
-    def delete_addon(self, project_id, addon_id):
+    def delete_addon(self, project_name, addon_name):
         """
         Deletes Addon
-        :param project_id:
-        :param addon_id:
+        :param project_name:
+        :param addon_name:
         :return:
         """
+
+        project_id = self.project.get_project_id(project_name=project_name)
+        addon_id = self.get_addon_id(project_name, addon_name)
+
         try:
             self.addon_sdk_instance.delete_addon(id=addon_id, project_id=project_id)
         except ApiException as e:
@@ -120,8 +154,16 @@ class RunParser(object):
         self.config = self.setup_flag_parser()
 
     def setup_flag_parser(self):
-        # not specifying a suite is supported in testrunner, we have a default here so that tests can be run without args
-        parser = argparse.ArgumentParser(usage="addon_sdk_examples.py --namespace namespacename --addon_name addonname --version version --project_id id")
+        parser = argparse.ArgumentParser(usage="addon_sdk_examples.py --action <get|delete|create|list> --addon_name addonname \
+                                               --addon_type <NativeHelm|NativeYaml> --version version \
+                                               --project_name projectname --namespace namespacename \
+                                               --chart <path to the helm chart> --values <path to values file> \
+                                               --yaml <path to yaml file>")
+
+        parser.add_argument("--action",
+                            type=str,
+                            dest="action_",
+                            default=None)
 
         parser.add_argument("--namespace",
                             type=str,
@@ -133,6 +175,11 @@ class RunParser(object):
                             dest="addon_name_",
                             default=None)
 
+        parser.add_argument("--addon_type",
+                            type=str,
+                            dest="addon_type_",
+                            default="NativeHelm")
+
         parser.add_argument("--version",
                             type=str,
                             dest="version_",
@@ -143,21 +190,49 @@ class RunParser(object):
                             dest="project_name_",
                             default=None)
 
+        parser.add_argument("--chart",
+                            type=str,
+                            dest="chart_",
+                            default=None)
+
+        parser.add_argument("--values",
+                            type=str,
+                            dest="values_",
+                            default=None)
+
+        parser.add_argument("--yaml",
+                            type=str,
+                            dest="yaml_",
+                            default=None)
+
         args = parser.parse_args()
 
-        return {"namespace":args.namespace_,"addon_name":args.addon_name_,"version":args.version_,"project_name":args.project_name_}
+        return {"action":args.action_,"namespace":args.namespace_,"addon_name":args.addon_name_,"version":args.version_,
+                "project_name":args.project_name_,"chart":args.chart_,"values":args.values_,"yaml":args.yaml_,
+                "addon_type": args.addon_type_}
 
 
 if __name__ == '__main__':
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    yaml_payload = os.path.join(ROOT_DIR, 'config/addon-nginx.yaml')
-    helm_payload = os.path.join(ROOT_DIR, 'config/chartmuseum.tgz')
-    helm_values = os.path.join(ROOT_DIR, 'config/chartmuseum-values.yaml')
     addon = addon_sdk_examples()
     config = RunParser().config
-    addon_resp = addon.create_yaml_addon(namespace=config['namespace'], addon_name=config['addon_name'], payload=yaml_payload,
-                                       project_name=config['project_name'],version=config['version'])
-    print("Addon created:{}".format(addon_resp))
-    # # addon.delete_addon(project_id='w2l5xqk',addon_id=addon_id)
-    # addon_id = addon.create_helm3_addon(namespace='elk-ns', addon_name='addon2', payload=helm_payload,values=helm_values, project_id='w2l5xqk',version='v1')
-    # # addon.delete_addon(project_id='w2l5xqk',addon_id=addon_id)
+    if config["action"] == "get":
+        resp = addon.get_addon(config["project_name"],config["addon_name"])
+        print(resp)
+    if config["action"] == "list":
+        resp = addon.list_addons(config["project_name"])
+        print(resp)
+    if config["action"] == "delete":
+        resp = addon.delete_addon(config["project_name"],config["addon_name"])
+        print(resp)
+    if config["action"] == "create":
+        if config["addon_type"] == "NativeHelm":
+            addon_resp = addon.create_helm3_addon(namespace=config["namespace"], addon_name=config["addon_name"],
+                                                  payload=config["chart"], values=config["values"],
+                                                 project_name=config["project_name"], version=config["version"])
+            print("Addon created:{}".format(addon_resp))
+        if config["addon_type"] == "NativeYaml":
+            addon_resp = addon.create_yaml_addon(namespace=config["namespace"], addon_name=config["addon_name"],
+                                                 payload=config["yaml"], project_name=config["project_name"],
+                                                 version=config["version"])
+            print("Addon created:{}".format(addon_resp))

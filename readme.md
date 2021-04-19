@@ -31,34 +31,46 @@ api_key: <api_key generated from your rafay organziation>
 ```
 #### Running
 1. `project_sdk_examples.py`:
-     - Run below command with necessary runner arguments to a create project
+     - Run below command with to a create project
     ```
-   python3 project_sdk_examples.py --project_name sample_project
+   python3 project_sdk_examples.py --action create --project_name sampleproject
     ```
     - Output: 
    ```
-   Project Created:{'project_id': 'pd270k4', 'name': 'sample_project'}
+   Project Created:{'project_id': 'pd270k4', 'name': 'sampleproject'}
    ```
-2. `addon_sdk_examples.py`:
-    - Run below command with necessary runner arguments to create addon
+2. `namespace_sdk_examples.py`:
+    - Run below command to create namespace
     ```
-   python3 addon_sdk_examples.py --namespace sample-namespace --addon_name sample-addon --project_name sample_project --version v1
+    python3 namespace.py --action create --project sampleproject --namespace demo
+    ```
+   - Output:
+   ```
+   Namespace created:{'namespace_id': 'j2qqyz2', 'name': 'demo'}
+   ```
+
+3. `addon_sdk_examples.py`:
+    - Run below command to create addon
+    ```
+    python3 addon.py --action create --project_name sampleproject --addon_name demo1 --addon_type NativeHelm --version v1 --namespace demo --chart config/chartmuseum.tgz --values config/chartmuseum-values.yaml
     ```
    - Output: 
    ```
-   Addon created:{'addon_id': 'g29wek0', 'type': 'NativeYaml', 'name': 'sample-addon'}
+   Addon created:{'addon_id': 'g29wek0', 'type': 'NativeHelm', 'name': 'demo1'}
    ```
-3. `blueprint_example.py`:
-     - Run below command with necessary runner arguments to a create blueprint
+
+4. `blueprint_sdk_examples.py`:
+     - Run below command to a create blueprint
     ```
-    python3 blueprint_sdk_examples.py --blueprint_name sample-blueprint --addons sample-addon sample-addon1 --project_name sample_project --version v1
+    python3 blueprint_sdk_examples.py --action create --project_name sampleproject --blueprint_name demo --version v1 --addons demo1
     ```
     - Output: 
    ```
-   Blueprint Created:{'name': 'sample-blueprint', 'id': 'dpkv0mn'}
+   Blueprint Created:{'name': 'demo', 'id': 'dpkv0mn'}
    ```
-4. `ekscluster_sdk_examples.py`:
-     - Run below command with necessary runner arguments to a provision EKS-Cluster
+
+5. `ekscluster_sdk_examples.py`:
+    - Run below command to a provision EKS-Cluster
        
     -   Sample EKS Config File for --config_file argument
     ```yaml
@@ -90,9 +102,14 @@ api_key: <api_key generated from your rafay organziation>
         gateway: Single
     ```
     ```
-    python3 ekscluster_sdk_examples.py --cluster_name demo-eks --project_name defaultproject --config_file ./eks-config.yaml --cluster_blueprint default --cloud_provider_id gkj3nzm --cloud_provider_name dev-credential
+    python3 ekscluster_sdk_examples.py --action create --cluster_name demo-eks --cloud_provider_name aws-dev --cluster_blueprint demo --project_name sampleproject --config_file ./eks-config.yaml
     ```
     - Output: 
    ```
    Cluster Created:{'cluster_id': 'j2q4p8k', 'cluster_type': 'aws-eks', 'cluster_name': 'demo-eks'}
+   ```
+
+   - To get the status of an EKS-Cluster:
+   ```
+   python3 ekscluster_sdk_examples.py --action status --project_name sampleproject --cluster_name demo-eks
    ```
