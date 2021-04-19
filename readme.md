@@ -27,7 +27,7 @@ Configuration file `user_config.yaml` has two parameters
 2. api_key - Generated API key to be placed here. SDK uses this API Key to authenticate and Authorize SDK binding calls.
 ```yaml
 host : "https://console.rafay.dev"
-api_key: <api_key generated from your rafay organziation>
+api_key: <api_key generated from your rafay organization>
 ```
 #### Running
 1. `project_sdk_examples.py`:

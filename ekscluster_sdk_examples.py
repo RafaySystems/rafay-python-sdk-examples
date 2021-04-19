@@ -147,7 +147,7 @@ class ekscluster_sdk_examples:
         try:
             response = self.cluster_sdk_instance.get_cluster(cluster_id=cluster_id, project_id=project_id)
         except ApiException as e:
-            print("Exception when calling ClusterApi->get_cluster: %s\\n" % e)
+            print("Exception when calling ClusterApi->get_cluster_status: %s\\n" % e)
 
         return response.to_dict()['status']
 
@@ -163,7 +163,7 @@ class ekscluster_sdk_examples:
         try:
             response = self.cluster_sdk_instance.get_cluster(cluster_id=cluster_id, project_id=project_id)
         except ApiException as e:
-            print("Exception when calling ClusterApi->get_cluster: %s\\n" % e)
+            print("Exception when calling ClusterApi->get_cluster_provision_status: %s\\n" % e)
 
         return response.to_dict()['provision']['status']
 
