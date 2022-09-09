@@ -41,13 +41,13 @@ class namespace_sdk_examples:
         """
         project_id = self.project.get_project_id(project_name=project_name)
         try:
-            request = Namespace(name=namespace)
+            request = Namespace(api_version="config.rafay.dev/v2" , kind="Namespace",metadata={"name":namespace,"urlScope":"project/kog1dn2"},spec={"metadata":{"name":namespace},"spec":{"namespaceMeta":{"name":namespace}},"type":"RafayWizard"})
             ns_response = self.namespce_sdk_instance.create_namespace(project_id, request)
             ns_resp = ns_response.to_dict()
 
         except ApiException as e:
             print("Exception when calling NamespacesApi->create_namespace: %s\\n" % e)
-        return {"namespace_id":ns_resp['id'],"name":ns_resp['name']}
+        return {"namespace_id":ns_resp["metadata"]["id"],"name":ns_resp["metadata"]["name"]}
 
 
     def list_namespaces(self, project_name):
