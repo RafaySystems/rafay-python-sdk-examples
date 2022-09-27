@@ -39,9 +39,24 @@ class namespace_sdk_examples:
         :param namespace:
         :return:
         """
+        namespace_config = {
+
+        "api_version":"config.rafay.dev/v2",
+        "kind":"Namespace",
+        "metadata":
+            {"name":namespace},
+        "spec":
+            {"metadata":
+                       {"name":namespace},
+            "spec":
+                 {"namespaceMeta":
+                      {"name":namespace}},
+                "type":"RafayWizard"
+              }
+         }
         project_id = self.project.get_project_id(project_name=project_name)
         try:
-            request = Namespace(api_version="config.rafay.dev/v2" , kind="Namespace",metadata={"name":namespace,"urlScope":"project/kog1dn2"},spec={"metadata":{"name":namespace},"spec":{"namespaceMeta":{"name":namespace}},"type":"RafayWizard"})
+            request = Namespace(api_version="config.rafay.dev/v2" , kind="Namespace",metadata={"name":namespace_config['metadata']['name']},spec={"metadata":{"name":namespace_config['spec']['spec']['namespaceMeta']['name']},"type":namespace_config['spec']['type']} )
             ns_response = self.namespce_sdk_instance.create_namespace(project_id, request)
             ns_resp = ns_response.to_dict()
 
